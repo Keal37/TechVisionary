@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quick Chat Web App</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: #29344b;
+}
+
+h1 {
+  font-size: 25px;
+}
+
+#header {
+  background: #2b80ff;
+  color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 4px;
+}
+
+.container {
+  margin: 4px;
+  margin: auto;
+  background: #29344b;
+  padding: 10px;
+}
+
+#name-form-container,
+#chat-container {
+  margin: auto;
+  max-width: 800px;
+  padding: 20px;
+}
+
+#name-form-container {
+  text-align: center;
+  border: 1px solid #2b80ff;
+  border-radius: 10px;
+  margin-top: 50px;
+}
+
+#chat-container {
+  border: 5px solid #2b80ff;
+  border-radius: 10px;
+}
+
+#name-form label,
+#name-form input,
+#name-form button {
+  display: block;
+  margin: 10px auto;
+  width: 100%;
+  max-width: 300px;
+}
+
+#chat-container {
+  text-align: center;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#typing-message {
+  font-style: italic;
+}
+
+#message-area {
+  height: 70vh;
+  overflow-y: scroll;
+  border: 1px solid #2b80ff;
+  padding: 10px;
+  border-radius: 5px;
+  border: 0;
+  left: 0;
+  right: 0;
+}
+
+#message-form {
+  display: flex;
+  margin-top: 10px;
+}
+
+#message-input {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+#message-form button {
+  min-width: 80px;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.sender-message {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+}
+
+.recipient-message {
+  background-color: #28a745;
+  color: white;
+  align-self: flex-start;
+}
+
+
+
+
+
+.message-content {
+  background: #007bff;
+  display: flex;
+  padding: 5px 2px 2px 5px;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: fit-content;
+  border-radius: 10px;
+}
+
+.message-time {
+  color: white;
+  font-style: italic;
+  font-size: 8px;
+  padding: 2px;
+}
+
+.message-text {
+  background: #007bff;
+  margin: 0;
+  color: rgb(255, 255, 255);
+}
+
+#message-area {
+  background: #ffffff;
+}
+
+label {
+  font-weight: bold;
+  font-size: 20px;
+  color: #2b80ff;
+}
+
+button {
+  height: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: 0.3s ease;
+  color: #ffffff;
+  background: #2b80ff;
+  border: 1px solid #2b80ff;
+}
+
+input {
+  border-radius: 5px;
+  outline: none;
+  background: #ffffff;
+  border: 1px solid #2b80ff;
+}
+
+#name-input,
+#message-input {
+  border-radius: 5px;
+  border: 1px solid #2b80ff;
+  width: 90%;
+  font-size: 20px;
+  background: #ffffff;
+}
+
+#name-input:focus,
+#message-input:focus {
+  outline: none;
+  border-color: #2b80ff;
+}
+
+#message-form {
+  margin-top: 20px;
+}
+
+.message {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.userName {
+  height: 25px;
+}
+
+.owner {
+  font-style: italic;
+}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div id="name-form-container">
+      <form id="name-form">
+        <h1>Quick Chat</h1>
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" name="name" required class="userName">
+        <button type="submit">Join Chat</button>
+        <span class="owner">Created By Ali.</span>
+      </form>
+    </div>
+
+    <div id="chat-container" style="display: none;">
+      <div id="header">
+        <h1>Quick Chat</h1>
+        <p id="typing-message"></p>
+      </div>
+
+      <div id="message-area"></div>
+
+      <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type your message..." required>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+  <script src="script.js"></script>
+
+  <script>
+    // Get name form and chat container elements
+    const nameForm = document.getElementById('name-form');
+    const nameFormContainer = document.getElementById('name-form-container');
+    const chatContainer = document.getElementById('chat-container');
+
+    // Get message form and message area elements
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    const messageArea = document.getElementById('message-area');
+
+    // Get typing message element
+    const typingMessage = document.getElementById('typing-message');
+
+    // Store user's name
+    let userName;
+
+    // Hide chat container and show name form by default
+    chatContainer.style.display = 'none';
+    nameFormContainer.style.display = 'block';
+
+    // Handle name form submission
+    nameForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      // Get user's name from input field
+      userName = nameForm.elements.name.value;
+      // Hide name form and show chat container
+      nameFormContainer.style.display = 'none';
+      chatContainer.style.display = 'block';
+    });
+
+    // Handle message form submission
+    messageForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      // Get user's message from input field
+      const message = messageInput.value;
+      // Create new message element and add to message area
+      const messageElement = document.createElement('div');
+      messageElement.className = `message ${userName === 'Me' ? 'outgoing' : 'incoming'}`;
+      messageElement.innerHTML =
+        `<div class="message-content">
+      <p class="message-text">${message}</p>
+      <span class="message-time">${new Date().toLocaleTimeString()}</span>
+    </div>`;
+      messageArea.appendChild(messageElement);
+      // Clear message input field
+      messageInput.value = '';
+      // Scroll to the bottom of the message area
+      messageArea.scrollTop = messageArea.scrollHeight;
+    });
+
+    // Handle message input change
+    messageInput.addEventListener('input', () => {
+      // If message input field is not empty, show typing message
+      if (messageInput.value.trim() !== '') {
+        typingMessage.textContent = `${userName} is typing...`;
+      }
+      // Otherwise, hide typing message
+      else {
+        typingMessage.textContent = '';
+      }
+    });
+  </script>
+</body>
+
+</html>
